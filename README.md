@@ -14,7 +14,7 @@ It also incorporates features that allow:
 
 ## Utils
 
-- OpenSCAD:
+- OpenSCAD: https://openscad.org/
 - Manual OpenSCAD: https://en.wikibooks.org/wiki/OpenSCAD_User_Manual
 
 ## Contact

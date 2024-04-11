@@ -1,5 +1,5 @@
 // -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
-// Title:        Stackable Storage Bins
+// Title:        Stackable Storage Bins Customizable
 // Version:      1.1
 // Release Date: 2022-06-29
 // Author:       Eloy Asensio (eloi.asensio@gmail.com)
@@ -23,6 +23,9 @@
 
 // System constants.
 EPS = 0.01+0;
+MARGIN_BETWEEN_PIECES = 0.5;
+TOP_REMOVER_WIDTH = 4;
+TOP_REMOVER_HEIGHT = 4;
 
 // -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
 /* [Assembly Options] */
@@ -59,6 +62,10 @@ dividers_num = 0; // [0:10]
 // Shows the layout of a divider and hides the layout of the container (true | false)
 dividers_show_template = false; 
 
+/* [Cover] */
+// Shows the layout of cover and hides the layout of the container (true | false)
+cover_show_template = false; 
+
 // -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
 
 BN_ANG = atan(nose_tall/nose_depth);
@@ -77,6 +84,9 @@ module main ()
     if( dividers_show_template ){
         divider();
     }
+    else if( cover_show_template ){
+        cover();
+    }
     else{
         union(){
             translate([0,nose_depth, 0]){
@@ -87,7 +97,7 @@ module main ()
             translate([0, EPS, 0])cheek( ( width - width_Wall + EPS) );
             supportsTop();
             supportsBottom();
-            dividersSupports();    
+            dividersSupports();  
         }
     }
 }
@@ -202,8 +212,8 @@ module oneSupportTop(){
                 );
             }
             translate([0-EPS,4.86+EPS,2+EPS]){
-                linear_extrude(depth - 2 - 2){
-                    square(4,4);
+                linear_extrude(depth - (width_Wall * 2)){
+                    square(TOP_REMOVER_WIDTH,TOP_REMOVER_HEIGHT);
                 }
             }
             translate([0-EPS,6.86+EPS,6+EPS]){
@@ -216,40 +226,38 @@ module oneSupportTop(){
 }
 
 module supportsBottom(){
-    echo (support_bottom_left);
-    echo (is_num(search(support_bottom_left, [1,2])[0]));
     if( is_num(search(support_bottom_right, [1,2])[0]) || is_num(search(support_bottom_left, [1,2])[0]) 
         ){
-        // pyramid
+        // pyramid right
         if( support_bottom_right == 1){
             translate([EPS, nose_depth + depth - 2 - 0.5])
-                oneSupportBottom();
+                oneSupportBottomPyramid();
         }
-        // puzzle
+        // puzzle right
         else if(support_bottom_right == 2){
             translate([EPS, nose_depth + depth - 2 - 0.5])
-                oneSupportAssemblableBottomA();  
+                oneSupportAssemblableBottomPuzzleLeft();  
         }
-        // pyramid
+        // pyramid left
         if( support_bottom_left == 1){
             translate([width-EPS,nose_depth + 2 + 0.5])
                 rotate(a=180, v=[0,0,1])
-                    oneSupportBottom();
+                    oneSupportBottomPyramid();
         }
-        // puzzle
+        // puzzle left
         else if(support_bottom_left == 2){
                 translate([width-EPS,nose_depth + 2 + 0.5])
-                    oneSupportAssemblableBottomB();
+                    oneSupportAssemblableBottomPuzzleRight();
         }
     }
 }
 
 
-module oneSupportAssemblableBottomA(){
+module oneSupportAssemblableBottomPuzzleLeft(){
     lDepth = depth - 2 - 2 - 1;
     lDepthPlus = 3;
     lHeight = 2.81;
-    lWidth = 6;
+    lWidth = 6+0.4;
     lWidthPLus = 3;
     adder = 0.2;
     rotate(a=180, v=[0,0,1]){
@@ -274,37 +282,35 @@ module oneSupportAssemblableBottomA(){
     
 }
 
-module oneSupportAssemblableBottomB(){
+module oneSupportAssemblableBottomPuzzleRight(){
     remover = 0.5;
     lDepth = depth - 2 - 2 - 1;
     lDepthPlus = 3 - remover;
     lHeight = 2.81;
-    lWidth = 6 -remover;
+    lWidth = 6 +0.4-remover;
     lWidthPLus = 3 + remover;
     plus_fix = 1;
-    //rotate(a=180, v=[0,0,1]){
-        linear_extrude(lHeight) {
-             polygon(
-                [
-                    [0,0],
-                    [0, lDepth],
-                    [lWidth,lDepth],
-                    [lWidth, lDepth-lDepthPlus*2],
-                    [lWidth-lWidthPLus, lDepth-lDepthPlus],
-                    [lWidth-lWidthPLus, lDepthPlus],
-                    [lWidth, lDepthPlus*2],
-                    [lWidth,0]
-                ],
-                [
-                    [0,1,2,3,4,5,6,7]
-                ]
-            );
-        }
-    //}
+    linear_extrude(lHeight) {
+         polygon(
+            [
+                [0,0],
+                [0, lDepth],
+                [lWidth,lDepth],
+                [lWidth, lDepth-lDepthPlus*2],
+                [lWidth-lWidthPLus, lDepth-lDepthPlus],
+                [lWidth-lWidthPLus, lDepthPlus],
+                [lWidth, lDepthPlus*2],
+                [lWidth,0]
+            ],
+            [
+                [0,1,2,3,4,5,6,7]
+            ]
+        );
+    }
 }
 
 
-module oneSupportBottom(){
+module oneSupportBottomPyramid(){
     rotate(a=90, v=[1,0,0]){
         rotate(a=90, v=[0,0,1]){
             linear_extrude(depth - 2 - 2 - 1) {
@@ -378,14 +384,14 @@ module dividersHalfSupport(x){
     }
 }
 
-module divider (){
+module divider(){
     linear_extrude(width_Wall-(0.4)) {
         k = 1.5;
         scale([1,1,1]){
             if(nose_with_bridge){
                 polygon(
                     [
-                        [nose_depth+EPS , N_BASE_TALL], //0 Throat Bottom
+                        [nose_depth+EPS, N_BASE_TALL], //0 Throat Bottom
                         [width_Wall-EPS, N_MID_TALL ], //1 nose Bottom
                         [width_Wall-EPS, nose_tall + nose_height ], //2 nose Top
                         [nose_depth+EPS, height], //3 nose Top
@@ -400,9 +406,9 @@ module divider (){
             else{
                 polygon(
                     [
-                        [nose_depth+EPS , width_Wall], //0 Throat Bottom
+                        [nose_depth+EPS, width_Wall], //0 Throat Bottom
                         [nose_depth+EPS, height], //3 nose Top
-                        [nose_depth+EPS+depth-width_Wall,height], //4 nose Top
+                        [nose_depth+EPS+depth-width_Wall, height], //4 nose Top
                         [nose_depth+EPS+depth-width_Wall, width_Wall ], //5 nose Top
                     ],
                     [
@@ -413,6 +419,14 @@ module divider (){
         }
         
     }
+}
+
+module cover(){
+    cover_depth  = depth - (width_Wall * 2) - MARGIN_BETWEEN_PIECES;
+    cover_width  = width + (TOP_REMOVER_WIDTH * 2) - MARGIN_BETWEEN_PIECES;
+    cover_height = TOP_REMOVER_HEIGHT;
+    translate([0,0,3])
+        cube([cover_width, cover_depth, cover_height], center=true);
 }
 
 
