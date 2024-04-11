@@ -12,6 +12,7 @@
 //
 // Release Notes:
 //
+// - Version 1.2: Viewer menu
 // - Version 1.1: Collect stacks of Bins (puzzle mode)
 // - Version 1.0: Stackable Storage Bins basic. Stack Bins.
 //
@@ -23,12 +24,15 @@
 
 // System constants.
 EPS = 0.01+0;
-MARGIN_BETWEEN_PIECES = 0.5;
-TOP_REMOVER_WIDTH = 4;
-TOP_REMOVER_HEIGHT = 4;
+MARGIN_BETWEEN_PIECES = 0.5+0;
+TOP_REMOVER_WIDTH = 4+0;
+TOP_REMOVER_HEIGHT = 4+0;
 
 // -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
-/* [Assembly Options] */
+
+/* [View Options] */
+design_type = 0; // [0:Storage Bin, 1:Divider, 2:Cover]
+/* [Storage Bin - Assembly Parameters] */
 // With of  Storage Bins (millimeters). Top and bottom support not included.
 width = 80;
 // depth of  Storage Bins (in )millimeters). The depth of nose isn't include in this value.
@@ -38,7 +42,7 @@ height = 60;
 // Thickness of the walls (millimeters). This value influences almost all parts of the design (walls, supports,...) 
 width_Wall=2;
 
-/* [Nose Parameters] */
+/* [Storage Bin - Nose Parameters] */
 // depth of nose (millimeters).
 nose_depth=15;
 // Distance between the base of the nose and the floor (millimeters)
@@ -48,7 +52,7 @@ nose_height=10;
 // Show or hide bridge of nose. (true = show bridge | false = hide bridge)
 nose_with_bridge = true; 
 
-/* [Support] */
+/* [Storage Bin - Support: Top, Bottom] */
 // Top support to make it stackable (true = show | false = hide)
 support_top = true;
 // Support to make it stackable
@@ -81,14 +85,21 @@ main();
 
 module main ()
 {      
-    if( dividers_show_template ){
+    if( design_type == 1 ){
         divider();
     }
-    else if( cover_show_template ){
+    else if( design_type == 2 ){
         cover();
     }
-    else{
-        union(){
+    else if( design_type == 0 ){
+        storageBin();
+    }
+}
+
+// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
+
+module storageBin(){
+    union(){
             translate([0,nose_depth, 0]){
                 body();
             };
@@ -98,11 +109,8 @@ module main ()
             supportsTop();
             supportsBottom();
             dividersSupports();  
-        }
     }
 }
-
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
 
 module nose ()
 {
