@@ -1,442 +1,636 @@
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
-// Title:        Stackable Storage Bins Customizable
-// Version:      1.1
-// Release Date: 2022-06-29
-// Author:       Eloy Asensio (eloi.asensio@gmail.com)
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
-//
-// Description:
-//
-// - Parametric Stackable Storage Bins, designed to be printed in one step.
-//
-//
-// Release Notes:
-//
-// - Version 1.2: Viewer menu
-// - Version 1.1: Collect stacks of Bins (puzzle mode)
-// - Version 1.0: Stackable Storage Bins basic. Stack Bins.
-//
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
-// Constants:
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
+/* 
+*Edited by P3D Design https://makerworld.com/en/@P3D_Design
 
+*Customize editing Complete
+*Standard setting rework Complete
 
-// System constants.
-EPS = 0.01+0;
-MARGIN_BETWEEN_PIECES = 0.5+0;
-TOP_REMOVER_WIDTH = 4+0;
-TOP_REMOVER_HEIGHT = 4+0;
+/*
 
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
+/*
+ * Copyright 2022 Code and Make (codeandmake.com)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
-/* [View Options] */
-design_type = 0; // [0:Storage Bin, 1:Divider, 2:Cover]
-/* [Storage Bin - Assembly Parameters] */
-// With of  Storage Bins (millimeters). Top and bottom support not included.
-width = 80;
-// depth of  Storage Bins (in )millimeters). The depth of nose isn't include in this value.
-depth = 100;
-// Height of  Storage Bins (millimeters). Top support not included.
-height = 60;
-// Thickness of the walls (millimeters). This value influences almost all parts of the design (walls, supports,...) 
-width_Wall=2;
+/*
+ * Stackable Storage Caddies by Code and Make (https://codeandmake.com/)
+ *
+ * https://codeandmake.com/post/stackable-storage-caddies
+ *
+ * Stackable Storage Caddies v1.4 (5 August 2022)
+ */
 
-/* [Storage Bin - Nose Parameters] */
-// depth of nose (millimeters).
-nose_depth=15;
-// Distance between the base of the nose and the floor (millimeters)
-nose_tall=15;
-// Nose height (millimeters)
-nose_height=10;
-// Show or hide bridge of nose. (true = show bridge | false = hide bridge)
-nose_with_bridge = true; 
+/* [General] */
 
-/* [Storage Bin - Support: Top, Bottom] */
-// Top support to make it stackable (true = show | false = hide)
-support_top = true;
-// Support to make it stackable
-support_bottom_right=1; // [0:None, 1:pyramid, 2:puzzle]
-// Support to make it stackable
-support_bottom_left=1; // [0:None, 1:pyramid, 2:puzzle]
+// Part to display
+Part = 1; // [1: Container, 2: Lid, 3: Container Corner Section - For Testing, 4: Lid Corner Section - For Testing, 5: All - Preview Only]
 
-/* [Dividers] */
-// Divider for storage bins. Add supports to place the dividers. (values from 0 to N)
-dividers_num = 0; // [0:10]
-// Shows the layout of a divider and hides the layout of the container (true | false)
-dividers_show_template = false; 
+// Inner length
+Inside_Length = 150; // [10:1:257]
 
-/* [Cover] */
-// Shows the layout of cover and hides the layout of the container (true | false)
-cover_show_template = false; 
+// Inner width
+Inside_Width = 120; // [10:1:257]
 
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
+// Inner height
+Inside_Height = 60; // [10:1:257]
 
-BN_ANG = atan(nose_tall/nose_depth);
-N_BASE_ANG = 90 - BN_ANG;
-N_BASE_TALL = width_Wall / sin(N_BASE_ANG);
-N_MID_TALL =  ( tan(BN_ANG) * (nose_depth-width_Wall) ) + N_BASE_TALL;
-TOP_NOSE = nose_with_bridge ? height : nose_tall + nose_height;
+// Inner corner radius
+Inside_Corner_Radius = 10; // [0:1:20]
 
+// Front options
+Front = 1; // [0:Solid, 1: Pattern]
+Front_Cutout = 1; // [0:No, 1: Yes]
+Front_Cutout_Border = 10; // [0:1:50]
 
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
+// Bottom type
+Bottom = 1; // [0:Solid, 1: Pattern]
 
-main();
+// Side type
+Sides = 1; // [0:Solid, 1: Pattern]
 
-module main ()
-{      
-    if( design_type == 1 ){
-        divider();
+// Rear type
+Rear = 1; // [0:Solid, 1: Pattern]
+
+// Thickness of the walls and base
+Material_Thickness = 4; // [2.5:0.1:10]
+
+/* [Cutout] */
+
+// Width of front cutout as a percentage
+Front_Cutout_Width_Percent = 90; // [0:1:100]
+
+// Width of front cutout as a percentage
+Front_Cutout_Height_Percent = 90; // [0:1:100]
+
+/* [Lip] */
+
+// Should a lip and lip recess be added
+Lip = 1; // [0: No, 1: Yes]
+
+// Gap between the lip and the recess
+Lip_Gap = 0.6; // [0.1:0.1:1]
+
+/* [Pattern] */
+
+// Type of pattern
+Pattern_Type = 6; // [0: None, 1: Hole, 2: Lines, 3: Triangles, 4: Diamonds, 5: Circles, 6: Hexagons, 7: Stars, 8: Hearts]
+
+// Amount of padding around the pattern
+Pattern_Padding = 0; // [0:1:100]
+
+// The width of the pattern elements
+Pattern_Width = 5; // [1:1:100]
+
+// Minimum pattern material thickness
+Pattern_Material_Thickness = 2; // [2:0.1:10]
+
+/* [Preview] */
+
+// Amount to split the parts (preview only)
+Split_Parts_In_Preview = 10; // [0:1:100]
+
+module caddy() {
+  $fn = 120;
+
+  insideCornerRadius = min(Inside_Corner_Radius, (Inside_Length / 2) - 0.01, (Inside_Width / 2) - 0.01, (Inside_Height / 2) - 0.01);
+  lipHeight = (Material_Thickness / 2);
+  lipRecessHeight = min(lipHeight + 1, Material_Thickness - 1);
+  lipThickness = (Material_Thickness / 2);
+
+  module insideProfile() {
+    translate([Material_Thickness, Material_Thickness, 0]) {
+      offset(r = insideCornerRadius) {
+        offset(delta = -insideCornerRadius) {
+          square(size=[Inside_Width, Inside_Length]);
+        }
+      }
     }
-    else if( design_type == 2 ){
-        cover();
+  }
+
+  module outsideProfile() {
+    offset(r = Material_Thickness) {
+      insideProfile();
     }
-    else if( design_type == 0 ){
-        storageBin();
+  }
+
+  module wallProfile() {
+    difference() {
+      outsideProfile();
+      insideProfile();
     }
-}
+  }
 
-// -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
+  module lipProfile(outsidePad, insidePad) {
+    difference() {
+      offset(r = lipThickness + (outsidePad != undef ? outsidePad : 0)) {
+        insideProfile();
+      }
 
-module storageBin(){
-    union(){
-            translate([0,nose_depth, 0]){
-                body();
-            };
-            translate([EPS, EPS, 0])nose();
-            translate([0, EPS, 0])cheek(0);
-            translate([0, EPS, 0])cheek( ( width - width_Wall + EPS) );
-            supportsTop();
-            supportsBottom();
-            dividersSupports();  
+      offset(r = -(insidePad != undef ? insidePad : 0)) {
+        insideProfile();
+      }
     }
-}
+  }
 
-module nose ()
-{
-    polyhedron(
-        points=[
-            [0, nose_depth ,0], //0 Throat Bottom
-            [width-EPS*2, nose_depth ,0], //1  Throat Bottom
-            [width, nose_depth, N_BASE_TALL], //2 Throat Bottom
-            [0,nose_depth , N_BASE_TALL], //3 Throat Bottom
+  module linesPatternProfile(width, length, lineWidth, materialThickness) {
+    longestSide = max(width, length);
+    hypotenuse = sqrt(pow(longestSide, 2) + pow(longestSide, 2));
 
-            [0, 0, nose_tall], //4 Throat Top
-            [width-EPS*2, 0 ,nose_tall], //5  Throat Top
-            [width-EPS*2, width_Wall, N_MID_TALL], //6 nose Bottom
-            [0, width_Wall, N_MID_TALL ], //7 nose Bottom
+    module lines(start) {
+      for (i=[start:ceil(longestSide / (lineWidth + materialThickness))]) {
+        translate([(i * (lineWidth + materialThickness)), 0, 0]) {
+          square(size=[lineWidth, hypotenuse], center = true);
+        }
+      }
+    }
 
-            [0, 0, nose_tall + nose_height], //8 nose Top
-            [width-EPS*2, 0, nose_tall + nose_height], //9  nose Top
-            [width-EPS*2, width_Wall, nose_tall + nose_height], //10 nose Top
-            [0, width_Wall, nose_tall + nose_height ], //11 nose Top
-        ],
-        faces=[
-            [0,1,2,3], // Throat bottom
-            [3,2,6,7], // Throat Front
-            [0,4,5,1], // Throat Back
+    translate([width / 2, length / 2, 0]) {
+      rotate([0, 0, -45]) {
+        lines(0);
 
-            [0,3,7], // Throat Left1
-            [0,7,4], // Throat Left2
-            [4,7,11], // Nose Left3
-            [4,11,8], // Nose Left4
+        mirror([1, 0, 0]) {
+          lines(1);
+        }
+      }
+    }
+  }
 
-            [1,5,6], // Throat Right1
-            [1,6,2], // Throat Right2
-            [5,10,6], // Nose Right3
-            [5,9,10], // Nose Right4
+  module triangle(altitude) {
+    radius = altitude * 2 / 3;
+    translate([0, (radius / 2) - (altitude / 2), 0]) {
+      rotate([0, 0, 90]) {
+        circle(r = radius, $fn = 3);
+      }
+    }
+  }
 
-            [8,11,10,9], // Nose Top
-            [4,8,9,5], // Nose Front
-            [7,6,10,11], // Nose Back
-        ]
-    );
-}
+  module trianglePatternProfile(width, length, altitude, materialThickness) {
+    edge = (2 / sqrt(3)) * altitude;
+    xBaseOffset = ((edge / 2) + materialThickness) * 2;
+    yBaseOffset = altitude + materialThickness;
+    xIterations = ceil(width / xBaseOffset);
+    yIterations = ceil(length / yBaseOffset);
+    totalWidth = xBaseOffset * xIterations;
+    totalLength = yBaseOffset * yIterations;
 
-module cheek(xPosition){
-     
-    polyhedron(
-        points=[
-            [xPosition, nose_depth+EPS , N_BASE_TALL], //0 Throat Bottom
-            [xPosition, width_Wall-EPS, N_MID_TALL ], //1 nose Bottom
-            [xPosition, width_Wall-EPS, nose_tall + nose_height ], //2 nose Top
-            [xPosition, nose_depth+EPS, TOP_NOSE ], //3 nose Top
-            [xPosition + width_Wall, nose_depth+EPS , N_BASE_TALL], //4 Throat Bottom
-            [xPosition + width_Wall, width_Wall-EPS, N_MID_TALL ], //5 nose Bottom
-            [xPosition + width_Wall, width_Wall-EPS, nose_tall + nose_height ], //6 nose Top
-            [xPosition + width_Wall, nose_depth+EPS, TOP_NOSE ], //7 nose Top
-        ],
-        faces=[
-            [0,1,2,3],
-            [4,7,6,5],
-            [2,6,7,3],
-            [1,0,4,5],
-            [1,5,6,2],
-            [0,3,7,4],
-        ]
-    );
-}
-
-module body(){
-    difference() 
-    {
-        cube( [width,depth,height] );
-        translate([width_Wall,0-EPS, width_Wall]) {
-            cube([
-                width-(width_Wall*2)+EPS,
-                depth - (width_Wall),
-                height
-            ]);
-        };
-    };
-}
-
-module supportsTop(){
-    if( support_top == true ){
-        translate([width - EPS,depth + nose_depth,height - 4.86]){
-            oneSupportTop();
-        };
-        translate([0 + EPS, nose_depth,height - 4.86]){
-            rotate(a=180, v=[0,0,1]){
-                oneSupportTop();
+    translate([-((totalWidth - width) / 2), -((totalLength - length) / 2), 0]) {
+      for (x=[0:xIterations]) {
+        for (y=[0:yIterations]) {
+          translate([xBaseOffset * x, yBaseOffset * y, 0]) {
+            mirror([0, (y % 2 == 0 ? 0 : 1), 0]) {
+              triangle(altitude);
             }
-        }
-    }
-}
 
-module oneSupportTop(){
-    rotate(a=90, v=[1,0,0]){
-        difference() {
-            linear_extrude(depth) {
-                polygon(
-                    [
-                        [0,0],
-                        [6,4.86],
-                        [6,4.86 + 4],
-                        [0,4.86 + 4]],
-                    [
-                        [0,1,2,3]
-                    ]
-                );
+            translate([(edge / 2) + materialThickness, 0, 0]) {
+              mirror([0, (y % 2 == 0 ? 1 : 0), 0]) {
+                triangle(altitude);
+              }
             }
-            translate([0-EPS,4.86+EPS,2+EPS]){
-                linear_extrude(depth - (width_Wall * 2)){
-                    square(TOP_REMOVER_WIDTH,TOP_REMOVER_HEIGHT);
-                }
+          }
+        }
+      }
+    }
+  }
+
+  module diamondPatternProfile(width, length, diamondWidth, materialThickness) {
+    intersection() {
+      linesPatternProfile(width, length, diamondWidth, materialThickness);
+
+      translate([width, 0, 0]) {
+        mirror([1, 0, 0]) {
+          linesPatternProfile(width, length, diamondWidth, materialThickness);
+        }
+      }
+    }
+  }
+
+  module circlePatternProfile(width, length, diameter, materialThickness) {
+    baseOffset = (diameter + materialThickness);
+    xIterations = ceil(width / (diameter + materialThickness));
+    yIterations = ceil(length / (diameter + materialThickness));
+    totalWidth = baseOffset * xIterations;
+    totalLength = baseOffset * yIterations;
+    // base facets on circumference, clamp between 20 and 60
+    fn = ceil(min(max(diameter * PI, 20), 60));
+
+    translate([-((totalWidth - width) / 2), -((totalLength - length) / 2), 0]) {
+      for (x=[0:xIterations]) {
+        for (y=[0:yIterations]) {
+          translate([x * (diameter + materialThickness), y * (diameter + materialThickness), 0]) {
+            circle(d = diameter, $fn = fn);
+          }
+        }
+      }
+    }
+  }
+
+  module hexPatternProfile(width, length, diameter, materialThickness) {
+    radius = diameter / 2;
+    apothem = radius * cos(180 / 6);
+
+    xBaseOffset = ((radius * 1.5) + (materialThickness)) * 2;
+    yBaseOffset = (apothem * 2) + materialThickness;
+    xIterations = ceil(width / xBaseOffset);
+    yIterations = ceil(length / yBaseOffset);
+    totalWidth = xBaseOffset * xIterations;
+    totalLength = yBaseOffset * yIterations;
+
+    translate([-((totalWidth - width) / 2), -((totalLength - length) / 2), 0]) {
+      for (x=[0:xIterations]) {
+        for (y=[0:yIterations]) {
+          translate([xBaseOffset * x, yBaseOffset * y, 0]) {
+            circle(r = radius, $fn = 6);
+
+            translate([(radius * 1.5) + materialThickness, apothem + (materialThickness / 2), 0]) {
+              circle(r = radius, $fn = 6);
             }
-            translate([0-EPS,6.86+EPS,6+EPS]){
-                linear_extrude(depth){
-                    square([1,4],true);
-                }
+          }
+        }
+      }
+    }
+  }
+
+  module starPatternProfile(width, length, diameter, materialThickness) {
+    baseOffset = (diameter + materialThickness);
+    xIterations = ceil(width / (diameter + materialThickness));
+    yIterations = ceil(length / (diameter + materialThickness));
+    totalWidth = baseOffset * xIterations;
+    totalLength = baseOffset * yIterations;
+    altitude = (diameter / 4) + (diameter / 2);
+
+    translate([-((totalWidth - width) / 2), -((totalLength - length) / 2), 0]) {
+      for (x=[0:xIterations]) {
+        for (y=[0:yIterations]) {
+          translate([x * (diameter + materialThickness), y * (diameter + materialThickness), 0]) {
+            translate([0, (diameter / 2) - (altitude / 2), 0]) {
+              triangle(altitude);
             }
-        }
-    }
-}
 
-module supportsBottom(){
-    if( is_num(search(support_bottom_right, [1,2])[0]) || is_num(search(support_bottom_left, [1,2])[0]) 
-        ){
-        // pyramid right
-        if( support_bottom_right == 1){
-            translate([EPS, nose_depth + depth - 2 - 0.5])
-                oneSupportBottomPyramid();
+            mirror([0, 1, 0]) {
+              translate([0, (diameter / 2) - (altitude / 2), 0]) {
+                triangle(altitude);
+              }
+            }
+          }
         }
-        // puzzle right
-        else if(support_bottom_right == 2){
-            translate([EPS, nose_depth + depth - 2 - 0.5])
-                oneSupportAssemblableBottomPuzzleLeft();  
-        }
-        // pyramid left
-        if( support_bottom_left == 1){
-            translate([width-EPS,nose_depth + 2 + 0.5])
-                rotate(a=180, v=[0,0,1])
-                    oneSupportBottomPyramid();
-        }
-        // puzzle left
-        else if(support_bottom_left == 2){
-                translate([width-EPS,nose_depth + 2 + 0.5])
-                    oneSupportAssemblableBottomPuzzleRight();
-        }
+      }
     }
-}
+  }
 
+  module heart(edge, altitude) {
+    topDiameter = ((edge / 2) + altitude - (sqrt(pow(edge / 2, 2) + pow(altitude, 2))));
+    bottomDiameter = topDiameter * 2 / 3;
+    topTranslateX = ((sqrt(3) / 2) * topDiameter) - edge / 2;
+    topTranslateY = (topDiameter / 2) - (altitude / 2);
+    bottomTranslateY = altitude / 2;
 
-module oneSupportAssemblableBottomPuzzleLeft(){
-    lDepth = depth - 2 - 2 - 1;
-    lDepthPlus = 3;
-    lHeight = 2.81;
-    lWidth = 6+0.4;
-    lWidthPLus = 3;
-    adder = 0.2;
-    rotate(a=180, v=[0,0,1]){
-        linear_extrude(lHeight) {
-             polygon(
-                [
-                    [0,0],
-                    [0, lDepth],
-                    [lWidth,lDepth],
-                    [lWidth, lDepth-lDepthPlus*2],
-                    [lWidth+lWidthPLus+adder, lDepth-lDepthPlus-adder],
-                    [lWidth+lWidthPLus+adder, lDepthPlus+adder],
-                    [lWidth, lDepthPlus*2],
-                    [lWidth,0]
-                ],
-                [
-                    [0,1,2,3,4,5,6,7]
-                ]
-            );
-        }
+    // base facets on altitude, clamp between 20 and 60
+    fn = ceil(min(max(altitude * PI, 20), 60));
+
+    hull() {
+      translate([-topTranslateX, topTranslateY, 0]) {
+        circle(d = topDiameter, $fn = fn);
+      }
+
+      translate([0, bottomTranslateY - bottomDiameter, 0]) {
+        circle(d = bottomDiameter, $fn = fn);
+      }
     }
+
+    hull() {
+      translate([topTranslateX, topTranslateY, 0]) {
+        circle(d = topDiameter, $fn = fn);
+      }
+
+      translate([0, bottomTranslateY - bottomDiameter, 0]) {
+        circle(d = bottomDiameter, $fn = fn);
+      }
+    }
+  }
+
+  module heartPatternProfile(width, length, altitude, materialThickness) {
+    edge = (2 / sqrt(3)) * altitude;
+    xBaseOffset = ((edge / 2) + materialThickness) * 2;
+    yBaseOffset = altitude + materialThickness;
+    xIterations = ceil(width / xBaseOffset);
+    yIterations = ceil(length / yBaseOffset);
+    totalWidth = xBaseOffset * xIterations;
+    totalLength = yBaseOffset * yIterations;
+
+    translate([-((totalWidth - width) / 2), -((totalLength - length) / 2), 0]) {
+      for (x=[0:xIterations]) {
+        for (y=[0:yIterations]) {
+          translate([xBaseOffset * x, yBaseOffset * y, 0]) {
+            mirror([0, (y % 2 == 0 ? 0 : 1), 0]) {
+              heart(edge, altitude);
+            }
+
+            translate([(edge / 2) + materialThickness, 0, 0]) {
+              mirror([0, (y % 2 == 0 ? 1 : 0), 0]) {
+                heart(edge, altitude);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  module patternMask(width, length) {
+    if (Pattern_Type == 1) {
+      // hole
+      square(size=[width, length]);
+    }
+    else if (Pattern_Type == 2) {
+      // lines
+      linesPatternProfile(width, length, Pattern_Width, Pattern_Material_Thickness);
+    }
+    else if (Pattern_Type == 3) {
+      // triangles
+      trianglePatternProfile(width, length, Pattern_Width, Pattern_Material_Thickness);
+    }
+    else if (Pattern_Type == 4) {
+      // diamonds
+      diamondPatternProfile(width, length, Pattern_Width, Pattern_Material_Thickness);
+    }
+    else if (Pattern_Type == 5) {
+      // circles
+      circlePatternProfile(width, length, Pattern_Width, Pattern_Material_Thickness);
+    }
+    else if (Pattern_Type == 6) {
+      // hexagons
+      hexPatternProfile(width, length, Pattern_Width, Pattern_Material_Thickness);
+    }
+    else if (Pattern_Type == 7) {
+      // stars
+      starPatternProfile(width, length, Pattern_Width, Pattern_Material_Thickness);
+    }
+    else if (Pattern_Type == 8) {
+      // hearts
+      heartPatternProfile(width, length, Pattern_Width, Pattern_Material_Thickness);
+    }
+  }
+
+  module bottom() {
+    linear_extrude(height = Material_Thickness, convexity = 10) {
+      outsideProfile();
+    }
+  }
+
+  module containerBody() {
+    bottom();
+
+    // walls
+    linear_extrude(height = Material_Thickness + Inside_Height, convexity = 10) {
+      wallProfile();
+    }
+
+    // lip
+    if (Lip) {
+      linear_extrude(height = Material_Thickness + Inside_Height + lipHeight, convexity = 10) {
+        lipProfile();
+      }
+    }
+  }
+
+  module frontCutout() {
+    width = (Inside_Width - (2 * insideCornerRadius)) * (Front_Cutout_Width_Percent / 100);
+    height = (Inside_Height + lipHeight) * (Front_Cutout_Height_Percent / 100);
+    roundingRadius = min(width / 2, height / 2, insideCornerRadius) - 0.00001;
+    depth = Material_Thickness + 1;
+    lipRoundingRadius = min(lipHeight, (Inside_Width - width) / 2, height - roundingRadius);
     
-}
-
-module oneSupportAssemblableBottomPuzzleRight(){
-    remover = 0.5;
-    lDepth = depth - 2 - 2 - 1;
-    lDepthPlus = 3 - remover;
-    lHeight = 2.81;
-    lWidth = 6 +0.4-remover;
-    lWidthPLus = 3 + remover;
-    plus_fix = 1;
-    linear_extrude(lHeight) {
-         polygon(
-            [
-                [0,0],
-                [0, lDepth],
-                [lWidth,lDepth],
-                [lWidth, lDepth-lDepthPlus*2],
-                [lWidth-lWidthPLus, lDepth-lDepthPlus],
-                [lWidth-lWidthPLus, lDepthPlus],
-                [lWidth, lDepthPlus*2],
-                [lWidth,0]
-            ],
-            [
-                [0,1,2,3,4,5,6,7]
-            ]
-        );
-    }
-}
-
-
-module oneSupportBottomPyramid(){
-    rotate(a=90, v=[1,0,0]){
-        rotate(a=90, v=[0,0,1]){
-            linear_extrude(depth - 2 - 2 - 1) {
-                polygon(
-                    [
-                        [0,0],
-                        [0, 3.75],
-                        [2.81,0]
-                    ],
-                    [
-                        [0,1,2]
-                    ]
-                );
+    translate([Material_Thickness + (Inside_Width / 2), depth, Material_Thickness + Inside_Height + lipHeight - height]) {
+      rotate([90, 0, 0]) {
+        linear_extrude(height = depth + 1, convexity = 10) {
+          translate([-width / 2, 0, 0]) {
+            offset(r = roundingRadius) {
+              offset(r = -roundingRadius) {
+                square(size=[width, height + roundingRadius + 1]);
+              }
             }
-        }
-    }
-}
 
-module dividersSupports(){
-    if(dividers_num > 0){
-        widthCenterDivider = (width - (width_Wall*2)) / (dividers_num+1);
-        for(i=[1:(dividers_num)]) {      
-            echo ((widthCenterDivider * i) + width_Wall);
-            dividersSupport( (widthCenterDivider * i) + width_Wall );
-        }
-    }
-}
+            translate([-lipRoundingRadius, height - lipRoundingRadius, 0]) {
+              difference() {
+                square(size=[lipRoundingRadius, lipRoundingRadius + 1]);
+                circle(r=lipRoundingRadius);
+              }
+            }
 
-module dividersSupport(x){
-    linearExtrude = ((depth-width_Wall)/4);
-    translate([x-(width_Wall/2), nose_depth + (depth/2) + (linearExtrude/2),width_Wall-EPS]){
-        rotate(a=90, v=[1,0,0]){
-            rotate(a=90, v=[0,0,1]){
-                dividersHalfSupport(linearExtrude);
+            translate([width + lipRoundingRadius, height - lipRoundingRadius, 0]) {
+              mirror([1, 0, 0]) {
+                difference() {
+                  square(size=[lipRoundingRadius, lipRoundingRadius + 1]);
+                  circle(r=lipRoundingRadius);
+                }
+              }
             }
+          }
         }
-        translate([width_Wall,0,0]){
-            rotate(a=90, v=[1,0,0]){
-                dividersHalfSupport(linearExtrude);
+      }
+    }
+  }
+
+  module body(part) {
+    difference() {
+      if (part == 1) {
+        containerBody();
+      } else if (part == 2) {
+        bottom();
+      }
+
+      // lip recess (underneath)
+      if (Lip) {
+        translate([0, 0, -0.01]) {
+          linear_extrude(height = lipRecessHeight + 0.01, convexity = 10) {
+            lipProfile(Lip_Gap / 2, Lip_Gap / 2);
+          }
+        }
+      }
+
+      // bottom pattern
+      if (Bottom == 1) {
+        translate([0, 0, -0.5]) {
+          linear_extrude(height = Material_Thickness + 1, convexity = 10) {
+            intersection() {
+              translate([Material_Thickness, Material_Thickness, 0]) {
+                patternMask(Inside_Width, Inside_Length);
+              }
+
+              offset(r = -Material_Thickness - Pattern_Padding) {
+                insideProfile();
+              }
             }
+          }
+        }
+      }
+
+      if (part != 2) {
+        if (Front_Cutout == 1) {
+          frontCutout();
         }
     }
-    translate([x-(width_Wall/2), nose_depth + (depth - width_Wall),height-EPS]){
-        rotate(a=180, v=[1,0,0]){
-            rotate(a=90, v=[0,0,1]){
-                dividersHalfSupport(height-width_Wall);
+      if (part != 2) {  
+        if (Front == 1) {
+          translate([Material_Thickness, Material_Thickness + 0.5, Material_Thickness]) {
+            rotate([90, 0, 0]) {
+              linear_extrude(height = Material_Thickness + 1, convexity = 10) {
+                intersection() {
+                  patternMask(Inside_Width, Inside_Height);
+                  patternWidth = Inside_Width - (insideCornerRadius * 2);
+                  patternHeight = Inside_Height - Front_Cutout_Border;
+
+                  translate([insideCornerRadius, 0, 0]) {
+                    offset(r = -Material_Thickness - Pattern_Padding) {
+                      offset(r = insideCornerRadius) {
+                        offset(delta = -insideCornerRadius) {
+                        square([patternWidth, patternHeight]);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
-        }
-        translate([width_Wall,0,0]){
-            rotate(a=180, v=[1,0,0]){
-                dividersHalfSupport(height-width_Wall);
+          }
+      }
+
+        // side pattern
+        if (Sides == 1) {
+          translate([-0.5, Material_Thickness, Material_Thickness]) {
+            rotate([90, 0, 90]) {
+              linear_extrude(height = Inside_Width + (Material_Thickness * 2) + 1, convexity = 10) {
+                intersection() {
+                  patternMask(Inside_Length, Inside_Height);
+                  patternWidth = Inside_Length - (insideCornerRadius * 2);
+                  patternHeight = Inside_Height;
+
+                  translate([insideCornerRadius, 0, 0]) {
+                    offset(r = -Material_Thickness - Pattern_Padding) {
+                      offset(r = insideCornerRadius) {
+                        offset(delta = -insideCornerRadius) {
+                        square([patternWidth, patternHeight]);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
+          }
         }
+
+        // rear pattern
+        if (Rear == 1) {
+          translate([Material_Thickness, Inside_Length + (Material_Thickness * 2) + 0.5, Material_Thickness]) {
+            rotate([90, 0, 0]) {
+              linear_extrude(height = Material_Thickness + 1, convexity = 10) {
+                intersection() {
+                  patternMask(Inside_Width, Inside_Height);
+                  patternWidth = Inside_Width - (insideCornerRadius * 2);
+                  patternHeight = Inside_Height;
+
+                  translate([insideCornerRadius, 0, 0]) {
+                    offset(r = -Material_Thickness - Pattern_Padding) {
+                      offset(r = insideCornerRadius) {
+                        offset(delta = -insideCornerRadius) {
+                        square([patternWidth, patternHeight]);
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
-}
+  }
 
-module dividersHalfSupport(x){
-    translate([0,0, 0]){
-        linear_extrude( x ) {
-            polygon(
-                [
-                    [0,0],
-                    [0, width_Wall],
-                    [width_Wall,0]
-                ],
-                [
-                    [0,1,2]
-                ]
-            );
+  module containerPart() {
+    body(1);
+  }
+
+  module lidPart() {
+    translate([0, 0, Material_Thickness]) {
+      translate([Inside_Width + (Material_Thickness * 2), 0, 0]) {
+        rotate([0, 180, 0]) {
+          body(2);
         }
+      }
     }
-}
+  }
 
-module divider(){
-    linear_extrude(width_Wall-(0.4)) {
-        k = 1.5;
-        scale([1,1,1]){
-            if(nose_with_bridge){
-                polygon(
-                    [
-                        [nose_depth+EPS, N_BASE_TALL], //0 Throat Bottom
-                        [width_Wall-EPS, N_MID_TALL ], //1 nose Bottom
-                        [width_Wall-EPS, nose_tall + nose_height ], //2 nose Top
-                        [nose_depth+EPS, height], //3 nose Top
-                        [nose_depth+EPS+depth-(width_Wall*1.5), height], //4 nose Top
-                        [nose_depth+EPS+depth-(width_Wall*1.5), N_BASE_TALL ], //5 nose Top
-                    ],
-                    [
-                        [0,1,2,3,4,5]
-                    ]
-                );
-            }
-            else{
-                polygon(
-                    [
-                        [nose_depth+EPS, width_Wall], //0 Throat Bottom
-                        [nose_depth+EPS, height], //3 nose Top
-                        [nose_depth+EPS+depth-width_Wall, height], //4 nose Top
-                        [nose_depth+EPS+depth-width_Wall, width_Wall ], //5 nose Top
-                    ],
-                    [
-                        [0,1,2,3]
-                    ]
-                );
-            }
+  if (Part != 5) {
+    if (Part == 1) {
+      containerPart();
+
+      echo("Container dimensions:");
+
+      echo(str("\tOutside length: ", Inside_Length + (Material_Thickness * 2), "mm"));
+      echo(str("\tOutside width: ", Inside_Width + (Material_Thickness * 2), "mm"));
+      echo(str("\tOutside height: ", Inside_Height + Material_Thickness + lipHeight, "mm"));
+
+      echo(str("\tLip width: ", Material_Thickness / 2, "mm"));
+      echo(str("\tLip height: ", lipHeight, "mm"));
+
+      echo(str("\tLip recess width: ", (Material_Thickness / 2) + Lip_Gap, "mm"));
+      echo(str("\tLip recess height: ", lipRecessHeight, "mm"));
+    } else if (Part == 2) {
+      lidPart();
+
+      echo("Lid dimensions:");
+
+      echo(str("\tOutside length: ", Inside_Length + (Material_Thickness * 2), "mm"));
+      echo(str("\tOutside width: ", Inside_Width + (Material_Thickness * 2), "mm"));
+      echo(str("\tOutside height: ", Material_Thickness, "mm"));
+
+      echo(str("\tLip recess width: ", (Material_Thickness / 2) + Lip_Gap, "mm"));
+      echo(str("\tLip recess height: ", lipRecessHeight, "mm"));
+    } else if (Part == 3) {
+      intersection() {
+        containerPart();
+        cube([Inside_Corner_Radius + (Material_Thickness * 1.5), Inside_Corner_Radius + (Material_Thickness * 1.5), Inside_Height + Material_Thickness + lipHeight]);
+      }
+    } else if (Part == 4) {
+      intersection() {
+        lidPart();
+        cube([Inside_Corner_Radius + (Material_Thickness * 1.5), Inside_Corner_Radius + (Material_Thickness * 1.5), Material_Thickness]);
+      }
+    }
+  } else {
+    if ($preview) {
+      %body(1);
+
+      translate([0, 0, Material_Thickness + Inside_Height + Split_Parts_In_Preview]) {
+        %body(1);
+
+        translate([0, 0, Material_Thickness + Inside_Height + Split_Parts_In_Preview]) {
+          %body(2);
         }
-        
+      }
     }
+  }
 }
 
-module cover(){
-    cover_depth  = depth - (width_Wall * 2) - MARGIN_BETWEEN_PIECES;
-    cover_width  = width + (TOP_REMOVER_WIDTH * 2) - MARGIN_BETWEEN_PIECES;
-    cover_height = TOP_REMOVER_HEIGHT;
-    translate([0,0,3])
-        cube([cover_width, cover_depth, cover_height], center=true);
-}
+caddy();
 
-
-
+echo("\r\tThis design is completely free and shared under a permissive license.\r\tYour support is hugely appreciated: codeandmake.com/support - Edited by P3D Design\r");
 
