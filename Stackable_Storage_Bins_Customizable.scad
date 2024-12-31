@@ -53,10 +53,10 @@ Inside_Height = 60; // [10:1:257]
 // Inner corner radius
 Inside_Corner_Radius = 10; // [0:1:20]
 
-// Front options
+// Front Pattern
 Front = 1; // [0:Solid, 1: Pattern]
 Front_Cutout = 1; // [0:No, 1: Yes]
-Front_Cutout_Border = 10; // [0:1:50]
+Front_Cutout_Border = 10; // [0:1:100]
 
 // Bottom type
 Bottom = 1; // [0:Solid, 1: Pattern]
@@ -494,7 +494,7 @@ module caddy() {
                 intersection() {
                   patternMask(Inside_Width, Inside_Height);
                   patternWidth = Inside_Width - (insideCornerRadius * 2);
-                  patternHeight = Inside_Height - Front_Cutout_Border;
+                  patternHeight = Inside_Height * ((100 - Front_Cutout_Border) / 100);
 
                   translate([insideCornerRadius, 0, 0]) {
                     offset(r = -Material_Thickness - Pattern_Padding) {
